@@ -19,20 +19,29 @@ import Footer from "@/components/Footer";
 
 const plans = [
   {
-    duration: "1 Week",
+    duration: "Daily",
+    price: "NPR 200",
+  },
+  {
+    duration: "Weekly",
     price: "NPR 1,000",
   },
   {
-    duration: "1 Month",
-    price: "NPR 3,000",
+    duration: "Monthly",
+    price: "NPR 3,500",
+    popular: true,
   },
   {
-    duration: "6 Months",
-    price: "NPR 15,000",
+    duration: "Quarterly",
+    price: "NPR 10,500",
   },
   {
-    duration: "1 Year",
-    price: "NPR 28,000",
+    duration: "Semi-Annual",
+    price: "NPR 21,000",
+  },
+  {
+    duration: "Annual",
+    price: "NPR 42,000",
   },
 ];
 
@@ -45,17 +54,17 @@ const features = [
   {
     icon: LockKeyhole,
     title: "Personal Lockers",
-    text: "Keep your books, notes and everyday study essentials secure.",
+    text: "Free locker access is included with monthly and longer memberships.",
   },
   {
     icon: Zap,
     title: "Power-Friendly Desks",
-    text: "Comfortable individual desks designed for laptops and long study sessions.",
+    text: "Comfortable individual spaces designed for laptops and long study sessions.",
   },
   {
     icon: Clock3,
     title: "Open 7 AM – 9 PM",
-    text: "A long daily study window that gives you more freedom to plan your routine.",
+    text: "A long daily study window for morning, daytime and evening study.",
   },
 ];
 
@@ -89,8 +98,6 @@ export default function HomePage() {
         <div className="home-hero-grid" />
 
         <div className="shell home-hero-layout">
-          {/* LEFT SIDE */}
-
           <motion.div
             initial="hidden"
             animate="visible"
@@ -114,9 +121,8 @@ export default function HomePage() {
             </motion.h1>
 
             <motion.p variants={reveal}>
-              A quiet and comfortable study environment with 25 dedicated desks,
-              dependable internet and flexible membership plans for students and
-              professionals.
+              A quiet and comfortable study environment with 47 study desks,
+              dependable internet and flexible plans from one day to one year.
             </motion.p>
 
             <motion.div className="hero-actions" variants={reveal}>
@@ -132,25 +138,27 @@ export default function HomePage() {
 
             <motion.div className="hero-stats" variants={reveal}>
               <div>
-                <strong>25</strong>
+                <strong>47</strong>
+
                 <span>Study desks</span>
               </div>
 
               <div>
-                <strong>4</strong>
+                <strong>6</strong>
+
                 <span>Membership plans</span>
               </div>
 
               <div>
                 <strong>7 days</strong>
+
                 <span>Open weekly</span>
               </div>
             </motion.div>
           </motion.div>
 
           {/* =================================================
-              RIGHT SIDE
-              INFO ONLY
+              INFORMATION CARD
           ================================================= */}
 
           <motion.div
@@ -181,7 +189,7 @@ export default function HomePage() {
                 gap: "13px",
               }}
             >
-              {/* 25 DESKS */}
+              {/* DESKS */}
 
               <div
                 style={{
@@ -193,46 +201,23 @@ export default function HomePage() {
                   background: "#eef2ed",
                 }}
               >
-                <div
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    flexShrink: 0,
-                    display: "grid",
-                    placeItems: "center",
-                    borderRadius: "14px",
-                    background: "#ffffff",
-                    color: "#f15a24",
-                  }}
-                >
-                  <BookOpen size={22} />
-                </div>
+                <BookOpen size={23} color="#f15a24" />
 
                 <div>
-                  <small
-                    style={{
-                      display: "block",
-                      marginBottom: "5px",
-                      color: "#6f7772",
-                      fontSize: "9px",
-                      fontWeight: "900",
-                      letterSpacing: "0.15em",
-                    }}
-                  >
-                    DEDICATED STUDY SPACE
-                  </small>
+                  <small>STUDY SPACE</small>
 
                   <strong
                     style={{
-                      fontSize: "18px",
+                      display: "block",
+                      marginTop: "4px",
                     }}
                   >
-                    25 Individual Study Desks
+                    47 Study Desks
                   </strong>
                 </div>
               </div>
 
-              {/* OPENING HOURS */}
+              {/* HOURS */}
 
               <div
                 style={{
@@ -244,41 +229,18 @@ export default function HomePage() {
                   background: "#eef2ed",
                 }}
               >
-                <div
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    flexShrink: 0,
-                    display: "grid",
-                    placeItems: "center",
-                    borderRadius: "14px",
-                    background: "#ffffff",
-                    color: "#f15a24",
-                  }}
-                >
-                  <Clock3 size={22} />
-                </div>
+                <Clock3 size={23} color="#f15a24" />
 
                 <div>
-                  <small
-                    style={{
-                      display: "block",
-                      marginBottom: "5px",
-                      color: "#6f7772",
-                      fontSize: "9px",
-                      fontWeight: "900",
-                      letterSpacing: "0.15em",
-                    }}
-                  >
-                    OPEN EVERY DAY
-                  </small>
+                  <small>OPEN DAILY</small>
 
                   <strong
                     style={{
-                      fontSize: "18px",
+                      display: "block",
+                      marginTop: "4px",
                     }}
                   >
-                    7:00 AM – 9:00 PM
+                    7 AM – 9 PM
                   </strong>
                 </div>
               </div>
@@ -295,80 +257,21 @@ export default function HomePage() {
                   background: "#eef2ed",
                 }}
               >
-                <div
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    flexShrink: 0,
-                    display: "grid",
-                    placeItems: "center",
-                    borderRadius: "14px",
-                    background: "#ffffff",
-                    color: "#f15a24",
-                  }}
-                >
-                  <MapPin size={22} />
-                </div>
+                <MapPin size={23} color="#f15a24" />
 
                 <div>
-                  <small
-                    style={{
-                      display: "block",
-                      marginBottom: "5px",
-                      color: "#6f7772",
-                      fontSize: "9px",
-                      fontWeight: "900",
-                      letterSpacing: "0.15em",
-                    }}
-                  >
-                    LOCATION
-                  </small>
+                  <small>LOCATION</small>
 
                   <strong
                     style={{
-                      fontSize: "18px",
+                      display: "block",
+                      marginTop: "4px",
                     }}
                   >
                     Samakhusi, Kathmandu
                   </strong>
                 </div>
               </div>
-            </div>
-
-            {/* DESCRIPTION */}
-
-            <div
-              style={{
-                marginTop: "25px",
-                padding: "20px",
-                borderRadius: "17px",
-                background: "#fff1e9",
-              }}
-            >
-              <small
-                style={{
-                  display: "block",
-                  marginBottom: "7px",
-                  color: "#d94b18",
-                  fontSize: "9px",
-                  letterSpacing: "0.15em",
-                  fontWeight: "900",
-                }}
-              >
-                YOUR DAILY FOCUS SPACE
-              </small>
-
-              <p
-                style={{
-                  margin: 0,
-                  color: "#6f7772",
-                  fontSize: "14px",
-                  lineHeight: "1.65",
-                }}
-              >
-                Designed for reading, exam preparation, remote work and long
-                uninterrupted focus sessions.
-              </p>
             </div>
           </motion.div>
         </div>
@@ -388,9 +291,9 @@ export default function HomePage() {
             <h2>Less distraction. More progress.</h2>
 
             <p>
-              Sunshine Study Room gives students and professionals a dedicated
-              place to read, prepare, work and stay consistent without the
-              distractions of cafés, busy homes or crowded public spaces.
+              Sunshine Study Room gives students and professionals a quiet
+              environment for reading, exam preparation, remote work and
+              consistent study.
             </p>
           </div>
         </div>
@@ -407,16 +310,15 @@ export default function HomePage() {
           </div>
 
           <div>
-            <span className="section-kicker">NEED TO TALK IT THROUGH?</span>
+            <span className="section-kicker">STUDYING TOGETHER?</span>
 
             <h2>
-              One private discussion room is available for collaborative study.
+              A separate discussion room is available for collaborative study.
             </h2>
 
             <p>
-              Perfect for group revision, presentation practice, project
-              planning and academic discussions while keeping the main study
-              hall quiet.
+              Ideal for revision, projects, presentation practice and small
+              group discussions.
             </p>
           </div>
 
@@ -428,28 +330,28 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================
-          PLANS
+          PRICE LIST
       ===================================================== */}
 
       <section className="section home-plans">
         <div className="shell">
           <div className="section-heading">
             <div>
-              <span className="section-kicker">02 · PLANS</span>
+              <span className="section-kicker">02 · PRICE LIST</span>
 
-              <h2>Choose your rhythm.</h2>
+              <h2>Study for a day or stay for the year.</h2>
             </div>
 
             <p>
-              Simple membership options for short-term revision, monthly
-              routines and long-term study consistency.
+              Six membership options designed for different study routines and
+              commitments.
             </p>
           </div>
 
           <div className="plan-grid">
             {plans.map((plan, index) => (
               <motion.article
-                className={`price-card ${index === 1 ? "featured-card" : ""}`}
+                className={`price-card ${plan.popular ? "featured-card" : ""}`}
                 key={plan.duration}
                 initial={{
                   opacity: 0,
@@ -463,10 +365,12 @@ export default function HomePage() {
                   once: true,
                 }}
                 transition={{
-                  delay: index * 0.08,
+                  delay: index * 0.06,
                 }}
               >
-                {index === 1 && <span className="popular-tag">POPULAR</span>}
+                {plan.popular && (
+                  <span className="popular-tag">MOST POPULAR</span>
+                )}
 
                 <small>MEMBERSHIP</small>
 
@@ -474,10 +378,10 @@ export default function HomePage() {
 
                 <strong>{plan.price}</strong>
 
-                <p>Dedicated access for your study routine.</p>
+                <p>Choose this plan for your next study routine.</p>
 
-                <Link href="/book">
-                  Book this plan
+                <Link href={`/book?plan=${encodeURIComponent(plan.duration)}`}>
+                  Choose plan
                   <ArrowRight size={16} />
                 </Link>
               </motion.article>
@@ -560,7 +464,7 @@ export default function HomePage() {
 
             <Link href="/book">
               <BookOpen size={17} />
-              Book a desk
+              Book now
             </Link>
           </div>
         </div>

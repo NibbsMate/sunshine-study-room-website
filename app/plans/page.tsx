@@ -1,29 +1,57 @@
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+
+import { ArrowRight, Check, X } from "lucide-react";
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const plans = [
   {
-    title: "1 Week",
-    price: "NPR 1,000",
-    text: "A simple short-term option for exam preparation or a focused study sprint.",
+    title: "Daily",
+    price: "NPR 200",
+    duration: "1 day",
+    locker: false,
+    description: "Perfect for a single focused study day.",
   },
   {
-    title: "1 Month",
-    price: "NPR 3,000",
-    text: "A balanced plan for building a consistent daily or weekly study routine.",
+    title: "Weekly",
+    price: "NPR 1,000",
+    duration: "7 days",
+    locker: false,
+    description: "A short-term option for revision and intensive study.",
+  },
+  {
+    title: "Monthly",
+    price: "NPR 3,500",
+    duration: "30 days",
+    locker: true,
+    description:
+      "A balanced plan for building a consistent monthly study routine.",
     popular: true,
   },
   {
-    title: "6 Months",
-    price: "NPR 15,000",
-    text: "Designed for students preparing for longer academic cycles and competitive exams.",
+    title: "Quarterly",
+    price: "NPR 10,500",
+    duration: "90 days",
+    locker: true,
+    description: "Three months of consistent study access.",
+    extra: "NPR 1,000 discount on upfront payment",
   },
   {
-    title: "1 Year",
-    price: "NPR 28,000",
-    text: "The best long-term value for anyone who wants a dependable year-round study base.",
+    title: "Semi-Annual",
+    price: "NPR 21,000",
+    duration: "180 days",
+    locker: true,
+    description: "A six-month membership for long-term study goals.",
+    extra: "One month discount on upfront payment",
+  },
+  {
+    title: "Annual",
+    price: "NPR 42,000",
+    duration: "360 days",
+    locker: true,
+    description: "Year-round access for maximum consistency.",
+    extra: "Two months discount on upfront payment",
   },
 ];
 
@@ -35,9 +63,11 @@ export default function PlansPage() {
       <section className="subpage-hero">
         <div className="shell">
           <span className="eyebrow">MEMBERSHIP PLANS</span>
-          <h1>Study longer. Pay smarter.</h1>
+
+          <h1>Find the plan that fits.</h1>
+
           <p>
-            Four straightforward plans, from one focused week to a full year.
+            Choose anything from a single study day to a full-year membership.
           </p>
         </div>
       </section>
@@ -46,24 +76,58 @@ export default function PlansPage() {
         <div className="shell plans-page-grid">
           {plans.map((plan) => (
             <article
-              className={`large-plan-card ${plan.popular ? "large-plan-featured" : ""}`}
               key={plan.title}
+              className={`large-plan-card ${
+                plan.popular ? "large-plan-featured" : ""
+              }`}
             >
-              {plan.popular && <span className="popular-tag">POPULAR</span>}
+              {plan.popular && (
+                <span className="popular-tag">MOST POPULAR</span>
+              )}
+
               <small>MEMBERSHIP</small>
+
               <h2>{plan.title}</h2>
+
               <strong>{plan.price}</strong>
-              <p>{plan.text}</p>
+
+              <p>{plan.description}</p>
 
               <div className="plan-benefits">
-                <span><Check size={15} /> Dedicated study desk access</span>
-                <span><Check size={15} /> High-speed internet</span>
-                <span><Check size={15} /> Personal locker availability</span>
-                <span><Check size={15} /> Open seven days a week</span>
+                <span>
+                  <Check size={15} />
+
+                  {plan.duration}
+                </span>
+
+                <span>
+                  <Check size={15} />
+                  Access to 47 shared study desks
+                </span>
+
+                <span>
+                  {plan.locker ? <Check size={15} /> : <X size={15} />}
+
+                  {plan.locker ? "Free locker" : "No locker"}
+                </span>
+
+                <span>
+                  <X size={15} />
+                  No refund
+                </span>
+
+                {plan.extra && (
+                  <span>
+                    <Check size={15} />
+
+                    {plan.extra}
+                  </span>
+                )}
               </div>
 
-              <Link href="/book">
-                Book this plan <ArrowRight size={17} />
+              <Link href={`/book?plan=${encodeURIComponent(plan.title)}`}>
+                Choose {plan.title}
+                <ArrowRight size={17} />
               </Link>
             </article>
           ))}

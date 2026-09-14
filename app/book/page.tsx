@@ -3,23 +3,25 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import {
-  AlertTriangle,
   ArrowRight,
-  CalendarDays,
   Check,
   DoorOpen,
+  Info,
+  Phone,
   Sparkles,
-  X,
 } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+const PHONE_NUMBER = "9849076796";
+const PHONE_LINK = "tel:+9779849076796";
+
 /* =====================================================
-   DESKS
+   47 DESKS
 ===================================================== */
 
-const desks = Array.from({ length: 25 }, (_, index) => index + 1);
+const desks = Array.from({ length: 47 }, (_, index) => index + 1);
 
 /* =====================================================
    PLANS
@@ -27,161 +29,55 @@ const desks = Array.from({ length: 25 }, (_, index) => index + 1);
 
 const plans = [
   {
-    name: "1 Week",
+    name: "Daily",
+    price: 200,
+    duration: "1 day",
+    fixedSeat: false,
+    locker: false,
+  },
+  {
+    name: "Weekly",
     price: 1000,
+    duration: "7 days",
+    fixedSeat: false,
+    locker: false,
   },
   {
-    name: "1 Month",
-    price: 3000,
+    name: "Monthly",
+    price: 3500,
+    duration: "30 days",
+    fixedSeat: true,
+    locker: true,
   },
   {
-    name: "6 Months",
-    price: 15000,
+    name: "Quarterly",
+    price: 10500,
+    duration: "90 days",
+    fixedSeat: true,
+    locker: true,
   },
   {
-    name: "1 Year",
-    price: 28000,
+    name: "Semi-Annual",
+    price: 21000,
+    duration: "180 days",
+    fixedSeat: true,
+    locker: true,
+  },
+  {
+    name: "Annual",
+    price: 42000,
+    duration: "360 days",
+    fixedSeat: true,
+    locker: true,
   },
 ];
-
-/* =====================================================
-   DATE HELPERS
-===================================================== */
-
-function parseDate(value: string) {
-  const [year, month, day] = value.split("-").map(Number);
-
-  return new Date(year, month - 1, day);
-}
-
-function formatInputDate(date: Date) {
-  const year = date.getFullYear();
-
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
-
-function getToday() {
-  return formatInputDate(new Date());
-}
-
-function addDays(value: string, days: number) {
-  if (!value) {
-    return "";
-  }
-
-  const date = parseDate(value);
-
-  date.setDate(date.getDate() + days);
-
-  return formatInputDate(date);
-}
-
-function addMonths(value: string, months: number) {
-  if (!value) {
-    return "";
-  }
-
-  const original = parseDate(value);
-
-  const originalDay = original.getDate();
-
-  const result = new Date(
-    original.getFullYear(),
-    original.getMonth() + months,
-    1,
-  );
-
-  const lastDay = new Date(
-    result.getFullYear(),
-    result.getMonth() + 1,
-    0,
-  ).getDate();
-
-  result.setDate(Math.min(originalDay, lastDay));
-
-  return formatInputDate(result);
-}
-
-function addYears(value: string, years: number) {
-  if (!value) {
-    return "";
-  }
-
-  const original = parseDate(value);
-
-  const result = new Date(original);
-
-  result.setFullYear(result.getFullYear() + years);
-
-  return formatInputDate(result);
-}
-
-function getPlanEndDate(startDate: string, plan: string) {
-  if (!startDate) {
-    return "";
-  }
-
-  if (plan === "1 Week") {
-    return addDays(startDate, 7);
-  }
-
-  if (plan === "1 Month") {
-    return addMonths(startDate, 1);
-  }
-
-  if (plan === "6 Months") {
-    return addMonths(startDate, 6);
-  }
-
-  if (plan === "1 Year") {
-    return addYears(startDate, 1);
-  }
-
-  return "";
-}
-
-function getDaysBetween(startDate: string, endDate: string) {
-  if (!startDate || !endDate) {
-    return 0;
-  }
-
-  const start = parseDate(startDate);
-
-  const end = parseDate(endDate);
-
-  return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-}
-
-function readableDate(value: string) {
-  if (!value) {
-    return "";
-  }
-
-  return parseDate(value).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
-
-/* =====================================================
-   PAGE
-===================================================== */
 
 export default function BookPage() {
   const [booked, setBooked] = useState<number[]>([]);
 
   const [selectedDesk, setSelectedDesk] = useState<number | null>(1);
 
-  const [plan, setPlan] = useState("1 Month");
-
-  const [startDate, setStartDate] = useState("");
-
-  const [endDate, setEndDate] = useState("");
+  const [plan, setPlan] = useState("Monthly");
 
   const [name, setName] = useState("");
 
@@ -189,10 +85,8 @@ export default function BookPage() {
 
   const [success, setSuccess] = useState(false);
 
-  const [popupOpen, setPopupOpen] = useState(false);
-
   /* =====================================================
-     LOAD BOOKED DESKS
+     LOAD SAVED BOOKINGS
   ===================================================== */
 
   useEffect(() => {
@@ -205,7 +99,7 @@ export default function BookPage() {
     try {
       setBooked(JSON.parse(stored));
     } catch {
-      // ignore
+      // Ignore bad localStorage data
     }
   }, []);
 
@@ -218,36 +112,14 @@ export default function BookPage() {
   }, [booked]);
 
   /* =====================================================
-     PLAN
+     SELECTED PLAN
   ===================================================== */
 
-  const selectedPlan = plans.find((item) => item.name === plan) ?? plans[1];
+  const selectedPlan = plans.find((item) => item.name === plan) ?? plans[2];
 
-  /* =====================================================
-     NUMBER OF DAYS
-  ===================================================== */
+  const fixedSeatAllowed = selectedPlan.fixedSeat;
 
-  const bookingDays = useMemo(() => {
-    return getDaysBetween(startDate, endDate);
-  }, [startDate, endDate]);
-
-  /* =====================================================
-     START DATE CHANGE
-  ===================================================== */
-
-  function handleStartDate(value: string) {
-    setStartDate(value);
-
-    if (!value) {
-      setEndDate("");
-
-      return;
-    }
-
-    const suggestedEnd = getPlanEndDate(value, plan);
-
-    setEndDate(suggestedEnd);
-  }
+  const isDailyPlan = selectedPlan.name === "Daily";
 
   /* =====================================================
      PLAN CHANGE
@@ -256,43 +128,22 @@ export default function BookPage() {
   function handlePlanChange(value: string) {
     setPlan(value);
 
-    if (startDate) {
-      setEndDate(getPlanEndDate(startDate, value));
-    }
-  }
+    const nextPlan = plans.find((item) => item.name === value);
 
-  /* =====================================================
-     END DATE CHANGE
-  ===================================================== */
-
-  function handleEndDate(value: string) {
-    if (!value) {
-      setEndDate("");
-
+    if (!nextPlan) {
       return;
     }
 
-    if (!startDate) {
-      setEndDate(value);
-
+    if (!nextPlan.fixedSeat) {
+      setSelectedDesk(null);
       return;
     }
 
-    const difference = getDaysBetween(startDate, value);
+    if (nextPlan.fixedSeat && selectedDesk === null) {
+      const nextAvailable = desks.find((desk) => !booked.includes(desk));
 
-    /* ===============================================
-       LESS THAN 1 WEEK
-    =============================================== */
-
-    if (difference < 7) {
-      setPopupOpen(true);
-
-      setEndDate("");
-
-      return;
+      setSelectedDesk(nextAvailable ?? null);
     }
-
-    setEndDate(value);
   }
 
   /* =====================================================
@@ -302,25 +153,17 @@ export default function BookPage() {
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!selectedDesk) {
+    if (fixedSeatAllowed && !selectedDesk) {
       return;
     }
 
-    if (!startDate || !endDate) {
-      return;
+    if (fixedSeatAllowed && selectedDesk) {
+      const next = Array.from(new Set([...booked, selectedDesk]));
+
+      setBooked(next);
+
+      localStorage.setItem("sunshine-demo-bookings", JSON.stringify(next));
     }
-
-    if (bookingDays < 7) {
-      setPopupOpen(true);
-
-      return;
-    }
-
-    const next = Array.from(new Set([...booked, selectedDesk]));
-
-    setBooked(next);
-
-    localStorage.setItem("sunshine-demo-bookings", JSON.stringify(next));
 
     setSuccess(true);
   }
@@ -335,37 +178,82 @@ export default function BookPage() {
 
       <section className="subpage-hero">
         <div className="shell">
-          <span className="eyebrow">BOOK A DESK</span>
+          <span className="eyebrow">BOOK YOUR SPACE</span>
 
           <h1>Choose your desk.</h1>
 
           <p>
-            Select your preferred desk, choose your membership period and submit
-            your booking request.
+            Select a membership plan and choose a desk when your plan includes a
+            fixed seat.
           </p>
         </div>
       </section>
 
       {/* =================================================
-          BOOKING
+          BOOKING SECTION
       ================================================= */}
 
       <section className="section booking-page-section">
         <div className="shell booking-page-grid">
           {/* =============================================
-              DESKS
+              DESK GRID
           ============================================= */}
 
-          <div className="seat-card">
+          <div
+            className="seat-card"
+            style={{
+              opacity: fixedSeatAllowed ? 1 : 0.72,
+            }}
+          >
             <div className="seat-card-head">
               <div>
-                <small>STUDY HALL</small>
+                <small>DESK SELECTION</small>
 
-                <strong>{available} of 25 available</strong>
+                <strong>
+                  {fixedSeatAllowed
+                    ? `${available} of 47 available`
+                    : "No fixed desk included"}
+                </strong>
               </div>
 
               <DoorOpen size={24} />
             </div>
+
+            {/* NO FIXED SEAT NOTE */}
+
+            {!fixedSeatAllowed && (
+              <div
+                style={{
+                  marginTop: "22px",
+                  padding: "16px",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "10px",
+                  borderRadius: "14px",
+                  background: "#fff1e9",
+                  border: "1px solid #ffd1bd",
+                  color: "#d94b18",
+                  fontSize: "13px",
+                  lineHeight: "1.55",
+                }}
+              >
+                <Info
+                  size={18}
+                  style={{
+                    flexShrink: 0,
+                    marginTop: "1px",
+                  }}
+                />
+
+                <span>
+                  <strong>{selectedPlan.name}</strong> membership does not
+                  include a fixed seat. Desk selection is available from the
+                  Monthly plan onwards.
+                </span>
+              </div>
+            )}
+
+            {/* 47 NUMBERED DESKS */}
 
             <div className="seat-grid">
               {desks.map((desk) => {
@@ -377,15 +265,21 @@ export default function BookPage() {
                   <button
                     key={desk}
                     type="button"
-                    disabled={isBooked}
+                    disabled={!fixedSeatAllowed || isBooked}
+                    onClick={() => setSelectedDesk(desk)}
                     className={[
                       "seat-button",
 
                       isBooked ? "seat-booked" : "",
 
-                      isSelected ? "seat-selected" : "",
+                      isSelected && fixedSeatAllowed ? "seat-selected" : "",
                     ].join(" ")}
-                    onClick={() => setSelectedDesk(desk)}
+                    style={{
+                      cursor:
+                        fixedSeatAllowed && !isBooked
+                          ? "pointer"
+                          : "not-allowed",
+                    }}
                   >
                     {desk}
                   </button>
@@ -420,7 +314,11 @@ export default function BookPage() {
               <>
                 <span className="section-kicker">BOOKING DETAILS</span>
 
-                <h2>Reserve Desk {selectedDesk ?? "—"}</h2>
+                <h2>
+                  {fixedSeatAllowed
+                    ? `Reserve Desk ${selectedDesk ?? "—"}`
+                    : "Request Membership"}
+                </h2>
 
                 <form onSubmit={submit}>
                   {/* PLAN */}
@@ -439,122 +337,159 @@ export default function BookPage() {
                     </select>
                   </label>
 
-                  {/* START DATE */}
+                  {/* =====================================
+                      DAILY CALL CONFIRMATION
+                  ===================================== */}
 
-                  <label>
-                    Start date
+                  {isDailyPlan && (
                     <div
-                      className="input-with-icon"
                       style={{
-                        width: "100%",
-
-                        minWidth: 0,
-
-                        maxWidth: "100%",
-
-                        overflow: "hidden",
-
-                        position: "relative",
+                        padding: "18px",
+                        display: "grid",
+                        gap: "13px",
+                        borderRadius: "16px",
+                        background: "#fff1e9",
+                        border: "1px solid #ffd1bd",
                       }}
                     >
-                      <CalendarDays size={17} />
-
-                      <input
-                        type="date"
-                        value={startDate}
-                        min={getToday()}
-                        onChange={(event) =>
-                          handleStartDate(event.target.value)
-                        }
-                        required
+                      <div
                         style={{
-                          width: "100%",
-
-                          minWidth: 0,
-
-                          maxWidth: "100%",
-
-                          display: "block",
-
-                          boxSizing: "border-box",
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: "10px",
                         }}
-                      />
-                    </div>
-                  </label>
+                      >
+                        <Phone
+                          size={19}
+                          style={{
+                            flexShrink: 0,
+                            marginTop: "2px",
+                            color: "#f15a24",
+                          }}
+                        />
 
-                  {/* END DATE */}
+                        <div>
+                          <strong
+                            style={{
+                              display: "block",
+                              color: "#17382f",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            Daily booking confirmation
+                          </strong>
 
-                  <label>
-                    End date
-                    <div
-                      className="input-with-icon"
-                      style={{
-                        width: "100%",
+                          <span
+                            style={{
+                              color: "#6f7772",
+                              fontSize: "13px",
+                              lineHeight: "1.55",
+                            }}
+                          >
+                            Please call Sunshine Study Room to confirm
+                            availability before visiting.
+                          </span>
+                        </div>
+                      </div>
 
-                        minWidth: 0,
-
-                        maxWidth: "100%",
-
-                        overflow: "hidden",
-
-                        position: "relative",
-                      }}
-                    >
-                      <CalendarDays size={17} />
-
-                      <input
-                        type="date"
-                        value={endDate}
-                        min={startDate ? addDays(startDate, 7) : getToday()}
-                        onChange={(event) => handleEndDate(event.target.value)}
-                        required
+                      <a
+                        href={PHONE_LINK}
+                        aria-label={`Call Sunshine Study Room at ${PHONE_NUMBER}`}
                         style={{
+                          minHeight: "49px",
                           width: "100%",
-
-                          minWidth: 0,
-
-                          maxWidth: "100%",
-
-                          display: "block",
-
-                          boxSizing: "border-box",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                          borderRadius: "999px",
+                          background: "#f15a24",
+                          color: "#ffffff",
+                          fontWeight: "900",
+                          whiteSpace: "nowrap",
                         }}
-                      />
-                    </div>
-                  </label>
+                      >
+                        <Phone size={17} />
+                        Call for Confirmation
+                      </a>
 
-                  {/* VALID PERIOD */}
-
-                  {startDate && endDate && bookingDays >= 7 && (
-                    <div
-                      style={{
-                        padding: "13px 15px",
-
-                        display: "flex",
-
-                        alignItems: "center",
-
-                        gap: "8px",
-
-                        borderRadius: "12px",
-
-                        background: "#edf6ef",
-
-                        color: "#27643c",
-
-                        border: "1px solid #cce3d0",
-
-                        fontSize: "13px",
-
-                        fontWeight: "700",
-                      }}
-                    >
-                      <Check size={17} />
-                      {bookingDays} day booking available
+                      <small
+                        style={{
+                          textAlign: "center",
+                          color: "#6f7772",
+                          fontSize: "11px",
+                        }}
+                      >
+                        {PHONE_NUMBER}
+                      </small>
                     </div>
                   )}
 
-                  {/* NAME */}
+                  {/* =====================================
+                      PLAN DETAILS
+                  ===================================== */}
+
+                  <div
+                    style={{
+                      padding: "16px",
+                      display: "grid",
+                      gap: "10px",
+                      borderRadius: "14px",
+                      background: "#f1f4ef",
+                      color: "#17382f",
+                      fontSize: "13px",
+                    }}
+                  >
+                    {/* DURATION */}
+
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: "15px",
+                      }}
+                    >
+                      <span>Duration</span>
+
+                      <strong>{selectedPlan.duration}</strong>
+                    </div>
+
+                    {/* FIXED SEAT */}
+
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: "15px",
+                      }}
+                    >
+                      <span>Fixed seat</span>
+
+                      <strong>
+                        {selectedPlan.fixedSeat ? "Included" : "Not included"}
+                      </strong>
+                    </div>
+
+                    {/* LOCKER */}
+
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: "15px",
+                      }}
+                    >
+                      <span>Locker</span>
+
+                      <strong>
+                        {selectedPlan.locker ? "Free locker" : "Not included"}
+                      </strong>
+                    </div>
+                  </div>
+
+                  {/* =====================================
+                      NAME
+                  ===================================== */}
 
                   <label>
                     Full name
@@ -567,7 +502,9 @@ export default function BookPage() {
                     />
                   </label>
 
-                  {/* PHONE */}
+                  {/* =====================================
+                      PHONE
+                  ===================================== */}
 
                   <label>
                     Phone number
@@ -581,37 +518,40 @@ export default function BookPage() {
                     />
                   </label>
 
-                  {/* SUMMARY */}
+                  {/* =====================================
+                      SUMMARY
+                  ===================================== */}
 
                   <div className="booking-price-summary">
                     <div
                       style={{
                         display: "grid",
-
-                        gap: "5px",
+                        gap: "4px",
                       }}
                     >
                       <span>{plan}</span>
 
-                      {startDate && endDate && (
-                        <small
-                          style={{
-                            color: "#6f7772",
+                      <small
+                        style={{
+                          color: "#6f7772",
+                          fontSize: "11px",
+                          lineHeight: "1.4",
+                        }}
+                      >
+                        {selectedPlan.duration}
 
-                            fontSize: "11px",
-                          }}
-                        >
-                          {readableDate(startDate)}
-
-                          {" → "}
-
-                          {readableDate(endDate)}
-                        </small>
-                      )}
+                        {fixedSeatAllowed &&
+                          selectedDesk &&
+                          ` · Desk ${selectedDesk}`}
+                      </small>
                     </div>
 
                     <strong>NPR {selectedPlan.price.toLocaleString()}</strong>
                   </div>
+
+                  {/* =====================================
+                      SUBMIT
+                  ===================================== */}
 
                   <button type="submit" className="submit-booking-btn">
                     Request booking
@@ -621,15 +561,13 @@ export default function BookPage() {
                   <small
                     style={{
                       display: "block",
-
                       textAlign: "center",
-
                       color: "#6f7772",
-
                       fontSize: "11px",
+                      lineHeight: "1.5",
                     }}
                   >
-                    Minimum booking period: 1 week
+                    Membership payments are non-refundable.
                   </small>
                 </form>
               </>
@@ -645,29 +583,57 @@ export default function BookPage() {
 
                 <h2>Booking request saved.</h2>
 
-                <p>Desk {selectedDesk} has been selected.</p>
-
                 <p>
-                  <strong>{readableDate(startDate)}</strong>
-
-                  {" → "}
-
-                  <strong>{readableDate(endDate)}</strong>
+                  Your <strong>{selectedPlan.name}</strong> membership request
+                  has been saved.
                 </p>
 
-                <p>{bookingDays} days</p>
+                {fixedSeatAllowed && selectedDesk && (
+                  <p>
+                    Fixed desk: <strong>{selectedDesk}</strong>
+                  </p>
+                )}
+
+                <p>NPR {selectedPlan.price.toLocaleString()}</p>
+
+                {isDailyPlan && (
+                  <a
+                    href={PHONE_LINK}
+                    style={{
+                      minHeight: "48px",
+                      margin: "20px auto 0",
+                      padding: "0 20px",
+                      width: "fit-content",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "8px",
+                      borderRadius: "999px",
+                      background: "#f15a24",
+                      color: "white",
+                      fontWeight: "900",
+                    }}
+                  >
+                    <Phone size={17} />
+                    Call to Confirm
+                  </a>
+                )}
 
                 <button
                   type="button"
                   onClick={() => {
                     setSuccess(false);
 
-                    setStartDate("");
+                    if (selectedPlan.fixedSeat) {
+                      const nextAvailable = desks.find(
+                        (desk) => !booked.includes(desk),
+                      );
 
-                    setEndDate("");
+                      setSelectedDesk(nextAvailable ?? null);
+                    }
                   }}
                 >
-                  Book another desk
+                  Make another booking
                 </button>
               </div>
             )}
@@ -688,164 +654,11 @@ export default function BookPage() {
 
             <span>
               Sunshine also has one separate discussion room for collaborative
-              study.
+              work.
             </span>
           </div>
         </div>
       </section>
-
-      {/* =================================================
-          MINIMUM BOOKING POPUP
-      ================================================= */}
-
-      {popupOpen && (
-        <div
-          style={{
-            position: "fixed",
-
-            inset: 0,
-
-            zIndex: 9999,
-
-            padding: "20px",
-
-            display: "grid",
-
-            placeItems: "center",
-
-            background: "rgba(10, 16, 14, 0.72)",
-
-            backdropFilter: "blur(8px)",
-          }}
-          onClick={() => setPopupOpen(false)}
-        >
-          <div
-            style={{
-              width: "min(430px, 100%)",
-
-              position: "relative",
-
-              padding: "34px",
-
-              borderRadius: "24px",
-
-              background: "#fffdf8",
-
-              color: "#1c211f",
-
-              boxShadow: "0 30px 80px rgba(0,0,0,0.3)",
-
-              textAlign: "center",
-            }}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => setPopupOpen(false)}
-              aria-label="Close"
-              style={{
-                position: "absolute",
-
-                top: "15px",
-
-                right: "15px",
-
-                width: "38px",
-
-                height: "38px",
-
-                display: "grid",
-
-                placeItems: "center",
-
-                border: 0,
-
-                borderRadius: "50%",
-
-                background: "#f1f3ef",
-
-                cursor: "pointer",
-              }}
-            >
-              <X size={18} />
-            </button>
-
-            <div
-              style={{
-                width: "70px",
-
-                height: "70px",
-
-                margin: "0 auto 20px",
-
-                display: "grid",
-
-                placeItems: "center",
-
-                borderRadius: "50%",
-
-                background: "#fff0ea",
-
-                color: "#f15a24",
-              }}
-            >
-              <AlertTriangle size={31} />
-            </div>
-
-            <h2
-              style={{
-                margin: "0 0 12px",
-
-                fontSize: "30px",
-
-                letterSpacing: "-0.04em",
-              }}
-            >
-              Booking unavailable
-            </h2>
-
-            <p
-              style={{
-                margin: "0",
-
-                color: "#6f7772",
-
-                lineHeight: "1.65",
-              }}
-            >
-              The minimum booking period at Sunshine Study Room is
-              <strong> 1 week</strong>. Please choose an end date at least 7
-              days after your start date.
-            </p>
-
-            <button
-              type="button"
-              onClick={() => setPopupOpen(false)}
-              style={{
-                width: "100%",
-
-                minHeight: "50px",
-
-                marginTop: "25px",
-
-                border: 0,
-
-                borderRadius: "999px",
-
-                background: "#17382f",
-
-                color: "#ffffff",
-
-                fontWeight: "900",
-
-                cursor: "pointer",
-              }}
-            >
-              Choose another date
-            </button>
-          </div>
-        </div>
-      )}
 
       <Footer />
     </main>
