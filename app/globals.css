@@ -2943,3 +2943,176 @@ a {
     font-size: 27px;
   }
 }
+/* =====================================================
+   FOOTER SOCIALS + REVIEW BUTTON
+===================================================== */
+
+.footer-brand {
+  min-width: 0;
+}
+
+.footer-brand p {
+  max-width: 360px;
+  line-height: 1.7;
+}
+
+.footer-socials {
+  margin-top: 22px;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 10px;
+}
+
+.footer-social-button {
+  min-height: 43px;
+
+  padding: 0 15px;
+
+  display: inline-flex !important;
+
+  align-items: center !important;
+  justify-content: center;
+
+  gap: 8px !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  color: rgba(255, 255, 255, 0.8) !important;
+
+  font-size: 12px !important;
+
+  font-weight: 800;
+
+  transition:
+    transform 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease !important;
+}
+
+.footer-social-button:hover {
+  transform: translateY(-3px) !important;
+
+  background: rgba(255, 255, 255, 0.1);
+
+  border-color: rgba(255, 255, 255, 0.3);
+
+  color: white !important;
+}
+
+/* =====================================================
+   REVIEW BUTTON
+===================================================== */
+
+.footer-review-button {
+  width: fit-content;
+
+  min-height: 46px;
+
+  margin-top: 10px;
+
+  padding: 0 17px;
+
+  display: inline-flex !important;
+
+  align-items: center !important;
+  justify-content: center;
+
+  gap: 8px !important;
+
+  border-radius: 999px;
+
+  background: var(--orange);
+
+  color: white !important;
+
+  font-size: 12px !important;
+
+  font-weight: 900;
+
+  white-space: nowrap;
+
+  transition:
+    transform 0.25s ease,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease !important;
+}
+
+.footer-review-button:hover {
+  transform: translateY(-3px) !important;
+
+  background: var(--orange-dark);
+
+  color: white !important;
+
+  box-shadow: 0 12px 26px rgba(241, 90, 36, 0.24);
+}
+
+/* =====================================================
+   FOOTER BOTTOM
+===================================================== */
+
+.footer-bottom {
+  margin-top: 42px;
+
+  padding-top: 24px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+
+  color: rgba(255, 255, 255, 0.35);
+
+  font-size: 11px;
+}
+
+/* =====================================================
+   FOOTER MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+  .footer-socials {
+    width: 100%;
+  }
+
+  .footer-social-button {
+    flex: 1 1 130px;
+  }
+
+  .footer-review-button {
+    width: 100%;
+
+    min-height: 48px;
+  }
+
+  .footer-bottom {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 8px;
+  }
+}
+
+@media (max-width: 420px) {
+  .footer-socials {
+    flex-direction: column;
+  }
+
+  .footer-social-button {
+    width: 100%;
+
+    flex: none;
+  }
+}

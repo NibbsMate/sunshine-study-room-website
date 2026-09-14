@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sunshine Study Room | Study Better in Samakhusi",
+  title: "Sunshine Study Room | Samakhusi, Kathmandu",
+
   description:
-    "Sunshine Study Room in Samakhusi, Kathmandu. Book one of 25 study desks and choose a weekly, monthly, six-month or yearly plan.",
+    "Sunshine Study Room offers a quiet and comfortable study environment in Samakhusi, Kathmandu with flexible daily, weekly, monthly and long-term membership plans.",
 };
 
 export const viewport: Viewport = {
@@ -21,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body suppressHydrationWarning>{children}</body>
     </html>
   );
