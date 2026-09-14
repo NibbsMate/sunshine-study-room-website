@@ -2581,3 +2581,70 @@ a {
     scroll-behavior: auto !important;
   }
 }
+/* =====================================================
+   IOS / INSTAGRAM DATE INPUT FIX
+===================================================== */
+
+.input-with-icon {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.input-with-icon input[type="date"] {
+  display: block;
+
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+
+  box-sizing: border-box;
+
+  padding-left: 40px;
+
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.booking-form-card {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.booking-form-card form {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.booking-form-card label {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .input-with-icon {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .input-with-icon input[type="date"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    font-size: 16px;
+
+    box-sizing: border-box;
+  }
+
+  .booking-form-card {
+    overflow: hidden;
+  }
+}
