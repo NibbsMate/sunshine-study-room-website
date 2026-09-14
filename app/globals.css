@@ -99,7 +99,9 @@ a {
 .site-header {
   position: absolute;
 
-  inset: 0 0 auto;
+  top: 0;
+  left: 0;
+  right: 0;
 
   z-index: 50;
 
@@ -137,6 +139,8 @@ a {
   max-width: 100%;
 
   height: 78px;
+
+  display: block;
 
   object-fit: contain;
 
@@ -179,6 +183,7 @@ a {
   bottom: -8px;
 
   width: 100%;
+
   height: 2px;
 
   background: var(--orange);
@@ -214,6 +219,7 @@ a {
   display: inline-flex;
 
   align-items: center;
+
   justify-content: center;
 
   gap: 7px;
@@ -227,6 +233,8 @@ a {
   line-height: 1;
 
   white-space: nowrap;
+
+  flex-shrink: 0;
 
   transition:
     transform 0.25s ease,
@@ -263,56 +271,12 @@ a {
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
 }
 
-.mobile-menu-button {
+.desktop-button-text {
+  display: inline;
+}
+
+.mobile-button-text {
   display: none;
-
-  width: 44px;
-  height: 44px;
-
-  align-items: center;
-  justify-content: center;
-
-  padding: 0;
-
-  border-radius: 50%;
-
-  background: rgba(255, 255, 255, 0.1);
-
-  color: white;
-
-  cursor: pointer;
-}
-
-.mobile-nav {
-  display: none;
-}
-
-.mobile-call-button,
-.mobile-book-button {
-  min-height: 50px;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 8px;
-
-  border-radius: 999px;
-
-  font-weight: 900;
-}
-
-.mobile-call-button {
-  background: var(--orange);
-
-  color: white;
-}
-
-.mobile-book-button {
-  background: var(--green);
-
-  color: white;
 }
 
 /* =====================================================
@@ -441,6 +405,7 @@ a {
   display: inline-flex;
 
   align-items: center;
+
   justify-content: center;
 
   gap: 10px;
@@ -1520,6 +1485,7 @@ a {
   display: flex;
 
   align-items: center;
+
   justify-content: center;
 
   gap: 8px;
@@ -1881,7 +1847,7 @@ a {
 }
 
 /* =====================================================
-   LARGE LAPTOPS
+   LARGE LAPTOP
 ===================================================== */
 
 @media (max-width: 1200px) {
@@ -1891,23 +1857,23 @@ a {
 
   .nav {
     grid-template-columns:
-      230px
-      minmax(280px, 1fr)
+      220px
+      minmax(250px, 1fr)
       auto;
 
-    gap: 16px;
+    gap: 14px;
   }
 
   .brand-link {
-    width: 220px;
+    width: 210px;
   }
 
   .site-logo {
-    width: 220px;
+    width: 210px;
   }
 
   .desktop-nav {
-    gap: 18px;
+    gap: 17px;
 
     font-size: 13px;
   }
@@ -1924,55 +1890,37 @@ a {
 }
 
 /* =====================================================
-   SMALL LAPTOP / LANDSCAPE TABLET
+   TABLETS / SMALL LAPTOP
 ===================================================== */
 
 @media (max-width: 1024px) {
-  .desktop-nav,
-  .nav-actions {
+  .nav {
+    grid-template-columns:
+      200px
+      1fr
+      auto;
+
+    gap: 12px;
+  }
+
+  .brand-link {
+    width: 190px;
+  }
+
+  .site-logo {
+    width: 190px;
+
+    height: 65px;
+  }
+
+  .desktop-nav {
     display: none;
   }
 
-  .nav {
-    grid-template-columns: 1fr auto;
-  }
-
-  .mobile-menu-button {
-    display: flex;
+  .nav-actions {
+    grid-column: 3;
 
     justify-self: end;
-  }
-
-  .mobile-nav {
-    display: grid;
-
-    padding: 20px max(24px, calc((100vw - 1180px) / 2));
-
-    background: white;
-
-    color: var(--green);
-
-    gap: 8px;
-
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.12);
-  }
-
-  .mobile-nav > a:not(.mobile-call-button):not(.mobile-book-button) {
-    min-height: 44px;
-
-    padding: 0 8px;
-
-    display: flex;
-
-    align-items: center;
-
-    border-bottom: 1px solid rgba(23, 56, 47, 0.08);
-
-    font-weight: 700;
-  }
-
-  .mobile-call-button {
-    margin-top: 8px;
   }
 
   .home-hero {
@@ -1982,7 +1930,7 @@ a {
   .home-hero-layout {
     min-height: auto;
 
-    padding-top: 160px;
+    padding-top: 155px;
     padding-bottom: 100px;
 
     grid-template-columns: 1fr;
@@ -2046,7 +1994,7 @@ a {
 }
 
 /* =====================================================
-   TABLETS
+   TABLET
 ===================================================== */
 
 @media (max-width: 768px) {
@@ -2059,12 +2007,33 @@ a {
   }
 
   .brand-link {
-    width: 210px;
+    width: 170px;
   }
 
   .site-logo {
-    width: 210px;
-    height: 68px;
+    width: 170px;
+
+    height: 60px;
+  }
+
+  .nav-actions {
+    gap: 7px;
+  }
+
+  .nav-cta {
+    min-height: 43px;
+
+    padding: 0 13px;
+
+    font-size: 12px;
+  }
+
+  .desktop-button-text {
+    display: none;
+  }
+
+  .mobile-button-text {
+    display: inline;
   }
 
   .home-hero-layout {
@@ -2151,25 +2120,59 @@ a {
   }
 
   .nav {
-    min-height: 82px;
+    min-height: 84px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 7px;
   }
 
   .brand-link {
-    width: 185px;
+    width: 138px;
+
+    flex: 0 1 138px;
+
+    min-width: 0;
   }
 
   .site-logo {
-    width: 185px;
-    height: 58px;
+    width: 138px;
+
+    height: 54px;
   }
 
-  .mobile-menu-button {
-    width: 42px;
-    height: 42px;
+  .nav-actions {
+    margin-left: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    flex-shrink: 0;
   }
 
-  .mobile-nav {
-    padding: 18px 14px 22px;
+  .nav-cta {
+    min-height: 42px;
+
+    padding: 0 12px;
+
+    gap: 5px;
+
+    font-size: 11px;
+  }
+
+  .nav-phone-icon {
+    width: 13px;
+
+    height: 13px;
+
+    flex-shrink: 0;
   }
 
   .home-hero-layout {
@@ -2350,7 +2353,7 @@ a {
 }
 
 /* =====================================================
-   SMALL PHONES
+   SMALL PHONE
 ===================================================== */
 
 @media (max-width: 420px) {
@@ -2358,17 +2361,46 @@ a {
     --page-padding: 22px;
   }
 
+  .nav {
+    min-height: 80px;
+
+    gap: 4px;
+  }
+
   .brand-link {
-    width: 165px;
+    width: 112px;
+
+    flex-basis: 112px;
   }
 
   .site-logo {
-    width: 165px;
-    height: 54px;
+    width: 112px;
+
+    height: 47px;
+  }
+
+  .nav-actions {
+    gap: 4px;
+  }
+
+  .nav-cta {
+    min-height: 39px;
+
+    padding: 0 9px;
+
+    font-size: 10px;
+
+    gap: 4px;
+  }
+
+  .nav-phone-icon {
+    width: 12px;
+
+    height: 12px;
   }
 
   .home-hero-layout {
-    padding-top: 110px;
+    padding-top: 108px;
   }
 
   .home-hero h1,
@@ -2425,7 +2457,7 @@ a {
 }
 
 /* =====================================================
-   VERY SMALL DEVICES
+   VERY SMALL PHONE
 ===================================================== */
 
 @media (max-width: 350px) {
@@ -2434,11 +2466,33 @@ a {
   }
 
   .brand-link {
-    width: 145px;
+    width: 92px;
+
+    flex-basis: 92px;
   }
 
   .site-logo {
-    width: 145px;
+    width: 92px;
+
+    height: 42px;
+  }
+
+  .nav-actions {
+    gap: 3px;
+  }
+
+  .nav-cta {
+    min-height: 37px;
+
+    padding: 0 8px;
+
+    font-size: 9px;
+  }
+
+  .nav-phone-icon {
+    width: 11px;
+
+    height: 11px;
   }
 
   .home-hero h1,
@@ -2502,7 +2556,7 @@ a {
   .nav-cta,
   .location-actions a,
   .submit-booking-btn {
-    min-height: 48px;
+    min-height: 44px;
   }
 }
 
