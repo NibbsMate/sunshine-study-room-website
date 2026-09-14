@@ -1,241 +1,329 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
-  BookOpen,
+  CalendarDays,
   Check,
-  Clock3,
-  LockKeyhole,
-  MapPin,
+  DoorOpen,
   Sparkles,
-  Users,
-  Wifi,
-  Zap,
 } from "lucide-react";
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const plans = [
-  { duration: "1 Week", price: "NPR 1,000" },
-  { duration: "1 Month", price: "NPR 3,000" },
-  { duration: "6 Months", price: "NPR 15,000" },
-  { duration: "1 Year", price: "NPR 28,000" },
-];
-
-const features = [
-  [Wifi, "High-Speed Internet", "Reliable connectivity for focused work and online classes."],
-  [LockKeyhole, "Personal Lockers", "Keep your books, notes and daily essentials secure."],
-  [Zap, "Power-Friendly Desks", "Work comfortably with laptops and devices for long sessions."],
-  [Clock3, "Open 7 AM – 9 PM", "A long daily study window designed around your routine."],
-];
-
-const reveal = {
-  hidden: { opacity: 0, y: 28 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.68, ease: [0.22, 1, 0.36, 1] as const },
+const desks = Array.from(
+  {
+    length: 25,
   },
-};
+  (_, i) => i + 1,
+);
 
-export default function HomePage() {
+const plans = [
+  {
+    name: "1 Week",
+    price: 1000,
+  },
+  {
+    name: "1 Month",
+    price: 3000,
+  },
+  {
+    name: "6 Months",
+    price: 15000,
+  },
+  {
+    name: "1 Year",
+    price: 28000,
+  },
+];
+
+export default function BookPage() {
+  const [booked, setBooked] = useState<number[]>([]);
+
+  const [selectedDesk, setSelectedDesk] = useState<number | null>(1);
+
+  const [plan, setPlan] = useState("1 Month");
+
+  const [date, setDate] = useState("");
+
+  const [name, setName] = useState("");
+
+  const [phone, setPhone] = useState("");
+
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("sunshine-demo-bookings");
+
+    if (stored) {
+      try {
+        setBooked(JSON.parse(stored));
+      } catch {
+        // Ignore invalid localStorage data
+      }
+    }
+  }, []);
+
+  const available = useMemo(() => {
+    return desks.filter((desk) => !booked.includes(desk)).length;
+  }, [booked]);
+
+  const selectedPlan = plans.find((item) => item.name === plan) ?? plans[1];
+
+  function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (!selectedDesk) {
+      return;
+    }
+
+    const next = Array.from(new Set([...booked, selectedDesk]));
+
+    setBooked(next);
+
+    localStorage.setItem("sunshine-demo-bookings", JSON.stringify(next));
+
+    setSuccess(true);
+  }
+
   return (
     <main>
       <Navbar />
 
-      <section className="home-hero">
-        <div className="home-hero-grid" />
-        <div className="shell home-hero-layout">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
-          >
-            <motion.span className="eyebrow" variants={reveal}>
-              SAMAKHUSI · KATHMANDU
-            </motion.span>
+      {/* =========================
+          PAGE HERO
+      ========================= */}
 
-            <motion.h1 variants={reveal}>
-              Your place to
-              <span>focus better.</span>
-            </motion.h1>
+      <section className="subpage-hero">
+        <div className="shell">
+          <span className="eyebrow">BOOK YOUR SPACE</span>
 
-            <motion.p variants={reveal}>
-              A quiet, comfortable study environment with 25 dedicated desks,
-              dependable internet and plans that fit the way you study.
-            </motion.p>
+          <h1>Choose your desk.</h1>
 
-            <motion.div className="hero-actions" variants={reveal}>
-              <Link href="/book" className="primary-btn">
-                Book a desk <ArrowRight size={18} />
-              </Link>
-              <Link href="/plans" className="secondary-btn">
-                View plans
-              </Link>
-            </motion.div>
+          <p>
+            Select one of 25 desks, choose your membership plan and send your
+            booking request.
+          </p>
+        </div>
+      </section>
 
-            <motion.div className="hero-stats" variants={reveal}>
-              <div><strong>25</strong><span>Study desks</span></div>
-              <div><strong>4</strong><span>Membership options</span></div>
-              <div><strong>7 days</strong><span>Open weekly</span></div>
-            </motion.div>
-          </motion.div>
+      {/* =========================
+          BOOKING SECTION
+      ========================= */}
 
-          <motion.div
-            className="hero-panel"
-            initial={{ opacity: 0, x: 55 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.9, delay: 0.25 }}
-          >
-            <div className="hero-panel-top">
-              <span>DESK AVAILABILITY</span>
-              <i />
-            </div>
+      <section className="section booking-page-section">
+        <div className="shell booking-page-grid">
+          {/* =========================
+              DESK SELECTOR
+          ========================= */}
 
-            <div className="hero-desk-grid">
-              {Array.from({ length: 15 }, (_, i) => (
-                <span key={i}>{i + 1}</span>
-              ))}
-            </div>
-
-            <div className="hero-panel-bottom">
+          <div className="seat-card">
+            <div className="seat-card-head">
               <div>
                 <small>STUDY HALL</small>
-                <strong>25 desks ready to book</strong>
+
+                <strong>{available} of 25 available</strong>
               </div>
-              <Link href="/book">Choose desk</Link>
+
+              <DoorOpen size={24} />
             </div>
-          </motion.div>
-        </div>
-      </section>
 
-      <section className="section intro-section">
-        <div className="shell two-column-copy">
-          <div>
-            <span className="section-kicker">01 · BUILT FOR FOCUS</span>
-          </div>
-          <div>
-            <h2>Less distraction. More progress.</h2>
-            <p>
-              Sunshine Study Room gives students and professionals a dedicated
-              place to read, prepare, work and stay consistent without the noise
-              and interruptions of cafés or crowded public spaces.
-            </p>
-          </div>
-        </div>
-      </section>
+            <div className="seat-grid">
+              {desks.map((desk) => {
+                const isBooked = booked.includes(desk);
 
-      <section className="section discussion-highlight">
-        <div className="shell discussion-banner">
-          <div className="discussion-icon">
-            <Users size={30} />
-          </div>
+                const isSelected = selectedDesk === desk;
 
-          <div>
-            <span className="section-kicker">NEED TO TALK IT THROUGH?</span>
-            <h2>One private discussion room is available for collaborative study.</h2>
-            <p>
-              Perfect for group revision, presentations, project planning and
-              focused discussions without disturbing the main study hall.
-            </p>
-          </div>
+                return (
+                  <button
+                    key={desk}
+                    type="button"
+                    disabled={isBooked}
+                    onClick={() => setSelectedDesk(desk)}
+                    className={[
+                      "seat-button",
 
-          <Link href="/about" className="discussion-link">
-            Learn more <ArrowRight size={17} />
-          </Link>
-        </div>
-      </section>
+                      isBooked ? "seat-booked" : "",
 
-      <section className="section home-plans">
-        <div className="shell">
-          <div className="section-heading">
-            <div>
-              <span className="section-kicker">02 · PLANS</span>
-              <h2>Choose your rhythm.</h2>
+                      isSelected ? "seat-selected" : "",
+                    ].join(" ")}
+                  >
+                    {desk}
+                  </button>
+                );
+              })}
             </div>
-            <p>
-              Simple membership options for short-term revision, monthly study
-              routines and long-term consistency.
-            </p>
-          </div>
 
-          <div className="plan-grid">
-            {plans.map((plan, index) => (
-              <motion.article
-                className={`price-card ${index === 1 ? "featured-card" : ""}`}
-                key={plan.duration}
-                initial={{ opacity: 0, y: 35 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.08 }}
-              >
-                {index === 1 && <span className="popular-tag">POPULAR</span>}
-                <small>MEMBERSHIP</small>
-                <h3>{plan.duration}</h3>
-                <strong>{plan.price}</strong>
-                <p>Dedicated access for your study routine.</p>
-                <Link href="/book">
-                  Choose plan <ArrowRight size={16} />
-                </Link>
-              </motion.article>
-            ))}
-          </div>
-        </div>
-      </section>
+            <div className="seat-legend">
+              <span>
+                <i className="legend-available" />
+                Available
+              </span>
 
-      <section className="section amenities-section">
-        <div className="shell">
-          <div className="section-heading">
-            <div>
-              <span className="section-kicker">03 · AMENITIES</span>
-              <h2>Everything around you supports focus.</h2>
+              <span>
+                <i className="legend-selected" />
+                Selected
+              </span>
+
+              <span>
+                <i className="legend-booked" />
+                Reserved
+              </span>
             </div>
           </div>
 
-          <div className="feature-grid">
-            {features.map(([Icon, title, text], index) => {
-              const IconComponent = Icon as typeof Wifi;
-              return (
-                <motion.article
-                  key={String(title)}
-                  initial={{ opacity: 0, y: 28 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.08 }}
-                >
-                  <IconComponent size={24} />
-                  <h3>{String(title)}</h3>
-                  <p>{String(text)}</p>
-                </motion.article>
-              );
-            })}
+          {/* =========================
+              BOOKING FORM
+          ========================= */}
+
+          <div className="booking-form-card">
+            {!success ? (
+              <>
+                <span className="section-kicker">BOOKING DETAILS</span>
+
+                <h2>Reserve Desk {selectedDesk ?? "—"}</h2>
+
+                <form onSubmit={submit}>
+                  {/* PLAN */}
+
+                  <label>
+                    Membership plan
+                    <select
+                      value={plan}
+                      onChange={(e) => setPlan(e.target.value)}
+                    >
+                      {plans.map((item) => (
+                        <option value={item.name} key={item.name}>
+                          {item.name} — NPR {item.price.toLocaleString()}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  {/* START DATE */}
+
+                  <label>
+                    Start date
+                    <div
+                      className="input-with-icon"
+                      style={{
+                        width: "100%",
+                        maxWidth: "100%",
+                        minWidth: 0,
+                        overflow: "hidden",
+                      }}
+                    >
+                      <CalendarDays size={17} />
+
+                      <input
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        required
+                        style={{
+                          display: "block",
+
+                          width: "100%",
+
+                          maxWidth: "100%",
+
+                          minWidth: 0,
+
+                          boxSizing: "border-box",
+
+                          WebkitAppearance: "none",
+
+                          appearance: "none",
+                        }}
+                      />
+                    </div>
+                  </label>
+
+                  {/* NAME */}
+
+                  <label>
+                    Full name
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your full name"
+                      required
+                    />
+                  </label>
+
+                  {/* PHONE */}
+
+                  <label>
+                    Phone number
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="98XXXXXXXX"
+                      required
+                    />
+                  </label>
+
+                  {/* PRICE */}
+
+                  <div className="booking-price-summary">
+                    <span>{plan}</span>
+
+                    <strong>NPR {selectedPlan.price.toLocaleString()}</strong>
+                  </div>
+
+                  {/* SUBMIT */}
+
+                  <button type="submit" className="submit-booking-btn">
+                    Request booking
+                    <ArrowRight size={17} />
+                  </button>
+                </form>
+              </>
+            ) : (
+              /* =========================
+                  SUCCESS
+              ========================= */
+
+              <div className="booking-success">
+                <span>
+                  <Check size={31} />
+                </span>
+
+                <h2>Booking request saved.</h2>
+
+                <p>
+                  Desk {selectedDesk} has been reserved in this demo for your{" "}
+                  {plan.toLowerCase()} plan.
+                </p>
+
+                <button type="button" onClick={() => setSuccess(false)}>
+                  Book another desk
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      <section className="location-cta">
-        <div className="shell location-layout">
-          <div>
-            <span className="section-kicker dark-kicker">04 · VISIT</span>
-            <h2>Find your study spot in Samakhusi.</h2>
-            <p>
-              Jaldhara Marg, Samakhusi, Kathmandu 44600, Nepal.
-            </p>
-          </div>
+      {/* =========================
+          DISCUSSION ROOM NOTE
+      ========================= */}
 
-          <div className="location-actions">
-            <a
-              href="https://www.google.com/maps/search/?api=1&query=Sunshine+Study+Room+Jaldhara+Marg+Kathmandu"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <MapPin size={17} /> Get directions
-            </a>
-            <Link href="/book">
-              <BookOpen size={17} /> Book a desk
-            </Link>
+      <section className="discussion-note">
+        <div className="shell discussion-note-inner">
+          <Sparkles size={24} />
+
+          <div>
+            <strong>Studying with a group?</strong>
+
+            <span>
+              Sunshine also has one separate discussion room for collaborative
+              work.
+            </span>
           </div>
         </div>
       </section>
